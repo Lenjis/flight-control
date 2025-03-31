@@ -1,0 +1,52 @@
+clear;
+trimuavA;
+size = 30; % Number of Monte Carlo simulations
+
+idx = 1;
+totoltime = 0;
+result = zeros(size, 6);
+disturbances = zeros(size, 9);
+
+global pcl pcd pcm pcQ pclele peng pwind pcweight pcXG;
+
+for i = 1:size
+    tic; % Start timer at the beginning of each iteration
+    pcl = 0.9 + rand() * 0.2; % +-0.1
+    pcd = 0.8 + rand() * 0.4; % +-0.2
+    pcm = 0.9 + rand() * 0.2; % +-0.1
+    pcQ = 0.5 + rand() * 1; % +-0.5
+    pclele = 0.9 + rand() * 0.2; % +-0.1
+    peng = 0.8 + rand() * 0.4; % +-0.2
+    pwind = -6 + rand() * 12; % +-6
+    pcweight = -3 + rand() * 6; % +-3
+    pcXG = -0.02 + rand() * 0.04; % +-0.02
+    disturbances(idx, :) = [pcl, pcd, pcm, pcQ, pclele, peng, pwind, pcweight, pcXG];
+    
+    out = sim('Pitch_for_speed_throttle_for_altitude');
+    
+    leng = length(out.simout);
+    
+    % Store the results from the simulation output
+    result(idx, 1) = out.simout(leng, 4); % X distance
+    result(idx, 2) = out.simout(leng, 6); % Y distance
+    result(idx, 3) = out.simout(leng, 1); % Vt
+    result(idx, 4) = out.simout(leng, 2); % alpha
+    result(idx, 5) = out.simout(leng, 11); % theta
+    result(idx, 6) = out.sinkrate(leng, 1); % sinkrate
+
+    disp("idx:")
+    disp(idx)
+    idx = idx + 1;
+    
+    elapsedTime = toc; % Stop timer at the end of each iteration
+    fprintf('Elapsed time for iteration %d: %.2f seconds\n', idx, elapsedTime);
+    
+    totoltime = totoltime + elapsedTime;
+end
+
+save("MonteCarlo_Result", 'result', 'disturbances', 'totoltime');
+subplot(2, 2, 1); histogram(result(:, 3), 20); xlabel('速度 m/s');
+subplot(2, 2, 2); histogram(result(:, 5), 20); xlabel('俯仰角 度');
+subplot(2, 2, 3); histogram(result(:, 6), 20); xlabel('下降率 m/s');
+subplot(2, 2, 4); histogram(result(:, 1), 20); xlabel('前向距离 m');
+fprintf('Total elapsed time: %.2f seconds\n', totoltime);

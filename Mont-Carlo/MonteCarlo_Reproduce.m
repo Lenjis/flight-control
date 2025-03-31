@@ -1,0 +1,12 @@
+global pcl pcd pcm pcQ pclele peng pwind pcweight pcXG;
+iter = 22;
+pcl = disturbances(iter, 1);
+pcd = disturbances(iter, 2);
+pcm = disturbances(iter, 3);
+pcQ = disturbances(iter, 4);
+pclele = disturbances(iter, 5);
+peng = disturbances(iter, 6);
+pwind = disturbances(iter, 7);
+pcweight = disturbances(iter, 8);
+pcXG = disturbances(iter, 9);
+sim('uavApproach_Vt_PI');
