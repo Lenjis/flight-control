@@ -1,6 +1,6 @@
 clear;
 trimuavA;
-size = 30; % Number of Monte Carlo simulations
+size = 100; % Number of Monte Carlo simulations
 
 idx = 1;
 totoltime = 0;
@@ -45,8 +45,8 @@ for i = 1:size
 end
 
 save("MonteCarlo_Result", 'result', 'disturbances', 'totoltime');
-subplot(2, 2, 1); histogram(result(:, 3), 20); xlabel('速度 m/s');
-subplot(2, 2, 2); histogram(result(:, 5), 20); xlabel('俯仰角 度');
-subplot(2, 2, 3); histogram(result(:, 6), 20); xlabel('下降率 m/s');
-subplot(2, 2, 4); histogram(result(:, 1), 20); xlabel('前向距离 m');
+subplot(2, 2, 1); histogram(result(:, 3),12); xlabel('速度 m/s');
+subplot(2, 2, 2); histogram(result(:, 5),12); xlabel('俯仰角 度');
+subplot(2, 2, 3); histogram(result(:, 6),12); xlabel('下降率 m/s');
+subplot(2, 2, 4); histogram(result(:, 1),12); xlabel('前向距离 m');
 fprintf('Total elapsed time: %.2f seconds\n', totoltime);
