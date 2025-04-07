@@ -3,7 +3,7 @@
 	"tasks": [
 		{
 			"type": "cppbuild",
-			"label": "C/C++: cl.exe build active file (Win32)",
+			"label": "C/C++: cl.exe build active file",
 			"command": "cl.exe",
 			"args": [
 				"/Zi",
@@ -19,7 +19,7 @@
 				"$msCompile"
 			],
 			"group": {
-				"kind": "build",
+				"kind": "test",
 				"isDefault": true
 			},
 			"detail": "compiler: cl.exe"
