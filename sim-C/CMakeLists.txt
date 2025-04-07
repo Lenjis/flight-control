@@ -10,7 +10,7 @@ set(CMAKE_C_FLAGS /source-charset:utf-8)
 
 # 添加源文件
 set(SOURCES
-    src/sim.c
+    src/main.c
     src/RK4.c
     src/model.c
 )
