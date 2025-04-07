@@ -3,16 +3,10 @@
 *.obj
 *.so
 *.dll
-*.exe
 *.out
 *.a
 *.lib
 *.pdb
-
-# 忽略构建输出文件夹
-/build/
-/bin/
-/dist/
 
 # 忽略临时文件
 *.tmp
@@ -20,12 +14,6 @@
 *.swp
 *.swo
 *.bak
-
-# 忽略 CMake 生成的文件
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-Makefile
 
 # 忽略 Visual Studio 生成的文件
 *.vcxproj
@@ -46,3 +34,16 @@ Makefile
 
 # 忽略 Git 合并冲突文件
 *.orig
+
+# 忽略 CMake 生成的无用文件
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+CTestTestfile.cmake
+*.cmake
+*.ninja
+build.ninja
+rules.ninja
+.ninja_log
+.ninja_deps

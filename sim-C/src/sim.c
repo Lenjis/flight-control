@@ -21,6 +21,7 @@ void ctrl_long(void) {
 
     ac_ele = KeTHETA * (ac_theta * Rad2Deg - theta_cmd) + KeQ * ac_Q * Rad2Deg;
 }
+
 /*飞行器横侧向控制*/
 void ctrl_late(void) {
     static double Kaphi = 0.5, KaP = 0.1;
@@ -66,7 +67,6 @@ void ctrl_task(void) {
 void simu_run(void) {
     static double g = 9.8;
     static double stheta, ctheta, sphi, cphi, spsi, cpsi;
-
     x[0] = ac_Vt;
     x[3] = ac_phi;
     x[6] = ac_P;
@@ -79,14 +79,11 @@ void simu_run(void) {
     x[5] = ac_psi;
     x[8] = ac_R;
     x[11] = ac_H;
-
     u[0] = ac_ele;
     u[1] = ac_ail;
     u[2] = ac_rud;
     u[3] = ac_eng;
-
     rk4(aircraft, t, x, u, 12, T, x, &t);
-
     ac_Vt = x[0];
     ac_phi = x[3];
     ac_P = x[6];
@@ -105,6 +102,7 @@ void simu_run(void) {
     if (ac_track >= 360.0) ac_track = ac_track - 360.0;
     ac_track = ac_track / Rad2Deg;
 }
+
 /*飞行器模型解算初始化，无需看懂*/
 void simu_init(void) {
     ac_Vt = 35;
@@ -140,7 +138,9 @@ void CALLBACK Timerdefine(UINT uDelay, UINT uMsg, DWORD dwUser, DWORD dw1,
 
     simu_run(); /*无人机模型解算 解算周期5ms*/
 
-    if (cnt % 2 == 1) ctrl_task(); /*简单的飞行控制*/
+    if (cnt % 2 == 1) {
+        ctrl_task();
+    } /*简单的飞行控制*/
 }
 
 void main(void) {
@@ -159,8 +159,8 @@ void main(void) {
         count++;
         count %= 10;
         if (count == 1) {
-            printf("Hello  phi: %lf  theta: %lf  psi: %lf\n", ac_phi * Rad2Deg,
-                   ac_theta * Rad2Deg, ac_psi * Rad2Deg);
+            printf("Greeting from Brian! phi: %lf  theta: %lf  psi: %lf\n",
+                   ac_phi * Rad2Deg, ac_theta * Rad2Deg, ac_psi * Rad2Deg);
         }
 
         fprintf(fp, "%lf  %lf %lf %lf\n", t, ac_phi * Rad2Deg,
