@@ -17,16 +17,17 @@ short flag_Stop = 1;
 
 /*飞行器纵向控制*/
 void ctrl_long(void) {
-    static double KeTHETA = 0.45, KeQ = 0.25, Kephi = 0.05;
+    static double Ke_theta = 0.45, Ke_Q = 0.25, Ke_phi = 0.05;
 
-    ac_ele = KeTHETA * (ac_theta * Rad2Deg - theta_cmd) + KeQ * ac_Q * Rad2Deg;
+    ac_ele =
+        Ke_theta * (ac_theta * Rad2Deg - theta_cmd) + Ke_Q * ac_Q * Rad2Deg;
 }
 
 /*飞行器横侧向控制*/
 void ctrl_late(void) {
-    static double Kaphi = 0.5, KaP = 0.1;
+    static double Ka_phi = 0.5, Ka_P = 0.1;
 
-    ac_ail = Kaphi * (ac_phi * Rad2Deg - phi_cmd) + KaP * ac_P * Rad2Deg;
+    ac_ail = Ka_phi * (ac_phi * Rad2Deg - phi_cmd) + Ka_P * ac_P * Rad2Deg;
 }
 
 /*飞行器控制模块*/
@@ -85,7 +86,7 @@ void simu_run(void) {
     u[3] = ac_eng;
 
     rk4(aircraft, t, x, u, 12, T, x, &t);
-    
+
     ac_Vt = x[0];
     ac_phi = x[3];
     ac_P = x[6];
@@ -138,11 +139,11 @@ void CALLBACK Timerdefine(UINT uDelay, UINT uMsg, DWORD dwUser, DWORD dw1,
     cnt++;
     cnt %= 100;
 
-    simu_run(); /*无人机模型解算 解算周期5ms*/
+    simu_run(); /*无人机模型解算 周期5ms*/
 
     if (cnt % 2 == 1) {
-        ctrl_task();
-    } /*简单的飞行控制*/
+        ctrl_task(); /*简单的飞行控制*/
+    }
 }
 
 void main(void) {
@@ -161,8 +162,9 @@ void main(void) {
         count++;
         count %= 10;
         if (count == 1) {
-            printf("Greeting from Brian! phi: %lf  theta: %lf  psi: %lf\n",
-                   ac_phi * Rad2Deg, ac_theta * Rad2Deg, ac_psi * Rad2Deg);
+            printf(
+                "Greeting from Brian! Running simulation! phi: %lf theta: %lf psi: %lf PN: %lf\n",
+                ac_phi * Rad2Deg, ac_theta * Rad2Deg, ac_psi * Rad2Deg, ac_PN);
         }
 
         fprintf(fp, "%lf  %lf %lf %lf\n", t, ac_phi * Rad2Deg,
