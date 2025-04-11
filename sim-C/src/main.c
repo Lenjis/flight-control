@@ -68,36 +68,36 @@ void ctrl_task(void) {
 void simu_run(void) {
     static double g = 9.8;
     static double stheta, ctheta, sphi, cphi, spsi, cpsi;
-    x[0] = ac_Vt;
-    x[3] = ac_phi;
-    x[6] = ac_P;
-    x[9] = ac_PN;
-    x[1] = ac_alpha;
-    x[4] = ac_theta;
-    x[7] = ac_Q;
-    x[10] = ac_PE;
-    x[2] = ac_beta;
-    x[5] = ac_psi;
-    x[8] = ac_R;
-    x[11] = ac_H;
     u[0] = ac_ele;
     u[1] = ac_ail;
     u[2] = ac_rud;
     u[3] = ac_eng;
+    x[0] = ac_Vt;
+    x[1] = ac_alpha;
+    x[2] = ac_beta;
+    x[3] = ac_phi;
+    x[4] = ac_theta;
+    x[5] = ac_psi;
+    x[6] = ac_P;
+    x[7] = ac_Q;
+    x[8] = ac_R;
+    x[9] = ac_PN;
+    x[10] = ac_PE;
+    x[11] = ac_H;
 
     rk4(aircraft, t, x, u, 12, T, x, &t);
 
     ac_Vt = x[0];
-    ac_phi = x[3];
-    ac_P = x[6];
-    ac_PN = x[9];
     ac_alpha = x[1];
-    ac_theta = x[4];
-    ac_Q = x[7];
-    ac_PE = x[10];
     ac_beta = x[2];
+    ac_phi = x[3];
+    ac_theta = x[4];
     ac_psi = x[5];
+    ac_P = x[6];
+    ac_Q = x[7];
     ac_R = x[8];
+    ac_PN = x[9];
+    ac_PE = x[10];
     ac_H = x[11];
 
     ac_track = (ac_psi)*Rad2Deg;
@@ -163,10 +163,10 @@ void main(void) {
         count %= 10;
         if (count == 1) {
             printf(
-                "Greeting from Brian! Running simulation! phi: %lf theta: %lf psi: %lf PN: %lf\n",
-                ac_phi * Rad2Deg, ac_theta * Rad2Deg, ac_psi * Rad2Deg, ac_PN);
+                "Greeting from Brian! Running simulation! phi: %lf theta: %lf "
+                "psi: %lf H: %lf\n",
+                ac_phi * Rad2Deg, ac_theta * Rad2Deg, ac_psi * Rad2Deg, ac_H);
         }
-
         fprintf(fp, "%lf  %lf %lf %lf\n", t, ac_phi * Rad2Deg,
                 ac_theta * Rad2Deg, -ac_psi * Rad2Deg);
     };

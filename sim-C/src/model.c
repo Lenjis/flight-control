@@ -24,22 +24,21 @@ void model6dof(double t, double x[], double u[], double dx[], int dim) {
 
     double ru, mach, qs;
 
-    // [VT,alpha,beta]  ----- airspeed(m/s), angle of attack(rad), angle of
-    // sideslip(rad) [wx,wy,wz]       ----- roll rate(rad/s),yaw
-    // rate(rad/s),pitch rate(rad/s) [theta,gama,psi] ----- pitch angle,roll
-    // angle,heading angle(rad) [alt,lon,lat]    ----- aircraft
-    // altitude(m),longitude(rad),latitude(rad)
+    // [VT,alpha,beta]  ----- airspeed(m/s), angle of attack(rad), angle of sideslip(rad)
+    // [wx,wy,wz]       ----- roll rate(rad/s),yaw rate(rad/s),pitch rate(rad/s)
+    // [theta,gama,psi] ----- pitch angle,roll angle,heading angle(rad)
+    // [alt,lon,lat]    ----- aircraft altitude(m),longitude(rad),latitude(rad)
     Vt = x[0];
-    phi = x[3];
-    P = x[6];
-    PN = x[9];
     alpha = x[1];
-    theta = x[4];
-    Q = x[7];
-    PE = x[10];
     beta = x[2];
+    phi = x[3];
+    theta = x[4];
     psi = x[5];
+    P = x[6];
+    Q = x[7];
     R = x[8];
+    PN = x[9];
+    PE = x[10];
     H = x[11];
 
     // control input
@@ -49,7 +48,7 @@ void model6dof(double t, double x[], double u[], double dx[], int dim) {
     ail = u[1];  // aileron  deflection angle [deg]
     rud = u[2];  // aileron  deflection angle [deg]
     eng = u[3];  // engine input
-                 // ------------------------------------------------
+    // ------------------------------------------------
 
     alpha_deg = alpha * 57.3;
     beta_deg = beta * 57.3;
@@ -84,16 +83,16 @@ void model6dof(double t, double x[], double u[], double dx[], int dim) {
     dH = 0;
 
     dx[0] = dVt;
-    dx[3] = dphi;
-    dx[6] = dP;
-    dx[9] = dPN;
     dx[1] = dalpha;
-    dx[4] = dtheta;
-    dx[7] = dQ;
-    dx[10] = dPE;
     dx[2] = dbeta;
+    dx[3] = dphi;
+    dx[4] = dtheta;
     dx[5] = dpsi;
+    dx[6] = dP;
+    dx[7] = dQ;
     dx[8] = dR;
+    dx[9] = dPN;
+    dx[10] = dPE;
     dx[11] = dH;
 }
 
