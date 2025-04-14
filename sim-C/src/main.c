@@ -1,19 +1,18 @@
-#include <windows.h>
-#include <math.h>
-#include <stdio.h>
-#include <time.h>
 #include "Sim.h"
 #include "model.h"
+#include <windows.h>
 #include <mmsystem.h>
+#include <math.h>
+#include <time.h>
+#include <stdio.h>
 #pragma comment(lib, "winmm.lib")
 
 void (*aircraft)();
 double T, x[13], u[3], t = 0;
 int sim_step, sim_status;
-
-short step_long = 0;
-double theta_cmd, theta_var, phi_cmd, phi_var;
 short flag_Stop = 1;
+short ctrl_state = 0;
+double theta_cmd, theta_var, phi_cmd, phi_var;
 
 /*飞行器纵向控制*/
 void ctrl_long(void) {
@@ -32,26 +31,26 @@ void ctrl_late(void) {
 
 /*飞行器控制模块*/
 void ctrl_task(void) {
-    switch (step_long) {
+    switch (ctrl_state) {
         case 0:
             theta_cmd = 2;
             phi_cmd = 0;
-            if (t >= 10) step_long++;
+            if (t >= 10) ctrl_state++;
             break;
         case 1:
             theta_cmd = 2;  // t*3.14/5- 周期T=10s
             phi_cmd = 30;
-            if (t >= 20) step_long++;
+            if (t >= 20) ctrl_state++;
             break;
         case 2:
             theta_cmd = 2;  // t*3.14/5- 周期T=10s
             phi_cmd = 0;
-            if (t >= 30) step_long++;
+            if (t >= 30) ctrl_state++;
             break;
         case 3:
             theta_cmd = 2;  // t*3.14/5- 周期T=10s
             phi_cmd = -30;
-            if (t >= 40) step_long++;
+            if (t >= 40) ctrl_state++;
             break;
         case 4:
             flag_Stop = 0;
@@ -68,10 +67,12 @@ void ctrl_task(void) {
 void simu_run(void) {
     static double g = 9.8;
     static double stheta, ctheta, sphi, cphi, spsi, cpsi;
+
     u[0] = ac_ele;
     u[1] = ac_ail;
     u[2] = ac_rud;
     u[3] = ac_eng;
+
     x[0] = ac_Vt;
     x[1] = ac_alpha;
     x[2] = ac_beta;
@@ -109,10 +110,10 @@ void simu_run(void) {
 /*飞行器模型解算初始化，无需看懂*/
 void simu_init(void) {
     ac_Vt = 35;
-    ac_alpha = 0 / Rad2Deg;
+    ac_alpha = 5 / Rad2Deg;
     ac_beta = 0 / Rad2Deg;
     ac_phi = 0.0 / Rad2Deg;
-    ac_theta = 0 / Rad2Deg;
+    ac_theta = 5 / Rad2Deg;
     ac_psi = 0.0 / Rad2Deg;
     ac_P = 0 / Rad2Deg;
     ac_Q = 0 / Rad2Deg;
@@ -127,10 +128,12 @@ void simu_init(void) {
     t = 0;
     aircraft = model6dof;
 
-    ac_ele = 0.0;
+    ac_ele = 0.1;
     ac_ail = 0.0;
     ac_rud = 0.0;
-    ac_eng = 0.27;
+    ac_eng = 0.5;
+
+    
 }
 
 void CALLBACK Timerdefine(UINT uDelay, UINT uMsg, DWORD dwUser, DWORD dw1,
@@ -163,13 +166,14 @@ void main(void) {
         count %= 10;
         if (count == 1) {
             printf(
-                "Greeting from Brian! Running simulation! phi: %lf theta: %lf "
+                "Running simulation! t: %lf phi: %lf "
+                "theta: %lf "
                 "psi: %lf H: %lf\n",
-                ac_phi * Rad2Deg, ac_theta * Rad2Deg, ac_psi * Rad2Deg, ac_H);
+                t, ac_phi * Rad2Deg, ac_theta * Rad2Deg, ac_psi * Rad2Deg,
+                ac_H);
         }
-        fprintf(fp, "%lf  %lf %lf %lf\n", t, ac_phi * Rad2Deg,
-                ac_theta * Rad2Deg, -ac_psi * Rad2Deg);
+        fprintf(fp, "%lf %lf %lf %lf %lf %lf %lf\n", t, ac_phi * Rad2Deg,
+                ac_theta * Rad2Deg, -ac_psi * Rad2Deg, ac_PN, ac_PE, ac_H);
     };
-
     fclose(fp);
 }
