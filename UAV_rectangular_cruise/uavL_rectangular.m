@@ -79,7 +79,10 @@ psi_hmr = 0.0;
 if (psi_hmr > 180) psi_hmr = psi_hmr - 360.0; end
 if (psi_hmr <- 180) psi_hmr = psi_hmr + 360.0; end
 
-Vt = 25; alpha = (2.7480) / rad2deg; beta = 0.0 / rad2deg; theta0 = (2.7480) / rad2deg;
+Vt = 25;
+alpha = (2.7480) / rad2deg;
+beta = 0.0 / rad2deg;
+theta0 = (2.7480) / rad2deg;
 
 x0 = [
       Vt;       alpha;  beta;
@@ -128,9 +131,9 @@ rud = u(3);      % rudder   deflection angle (deg)
 eng = u(4);      
 % ele=-1.875; ail=1; rud=-1; eng=35;
 % ------------------------------------------------% 
-SA = 1.3536;    % [�������]|[ƽ����]
-b = 3.2;        % [��չ]|[��]
-cbar = 0.423;   % [ƽ�������ҳ�]|[��]
+SA = 1.3536;
+b = 3.2;
+cbar = 0.423;
 Jx = 1.71;
 Jy = 5.54;
 Jz = 4.15;
@@ -143,27 +146,26 @@ g=9.81;
 alpha_deg = alpha*rad2deg;
 beta_deg = beta*rad2deg;
 
-% ---- ����ת���󣬴�����ϵ������ϵ----
 salpha = sin(alpha); sbeta = sin(beta);
 calpha = cos(alpha); cbeta = cos(beta);
 S = [calpha * cbeta -calpha * sbeta -salpha;
    sbeta cbeta 0;
    salpha * cbeta -salpha * sbeta calpha];
-% ---- ӭ�ǲ໬������������ٶ�----
+
 U = Vt * calpha * cbeta;
 V = Vt * sbeta;
 W = Vt * salpha * cbeta;
 uvw = [U; V; W];
-% ---- ����ת���󣬴ӵ���ϵ������ϵ----
+
 sphi = sin(phi); stheta = sin(theta); spsi = sin(psi);
 cphi = cos(phi); ctheta = cos(theta); cpsi = cos(psi);
+
 B = [ctheta * cpsi ctheta * spsi -stheta;
    sphi * stheta * cpsi - cphi * spsi sphi * stheta * spsi + cphi * cpsi sphi * ctheta;
    cphi * stheta * cpsi + sphi * spsi cphi * stheta * spsi - sphi * cpsi cphi * ctheta];
 
-% ---- ��������----
 Pow = eng / 100 * (mass * g / 4.0);
-% ---- ��������ܶȺͶ�ѹ----
+
 [ru, mach] = UAV_density(H, Vt); % [air density] [mach number]
 qs = SA * (ru * Vt * Vt / 2); % [Dynamic pressure](kg/m^2)
 % ---- ����������----
@@ -194,7 +196,7 @@ M = qs * cbar * (CM0 + CM_ele * ele + (CM_Q * Q) * cbar / Vt / 2); % + CM_dalpha
 [CN_beta, CN_ail, CN_rud, CN_P, CN_R] = UAV_CN(alpha_deg, beta_deg);
 N = qs * b * (CN_beta * beta_deg + CN_ail * ail + CN_rud * rud + (CN_P * P + CN_R * R) * b / Vt / 2);
 
-% ---- ������˶�����----
+% ---- ������˶�����?----
 J = [Jx 0 -Jxz; 0 Jy 0; -Jxz 0 Jz];
 dpqr = inv(J) * (-cross(pqr, (J * pqr)) + [Lbar; M; N]);
 dP = dpqr(1); dQ = dpqr(2); dR = dpqr(3);
@@ -203,7 +205,7 @@ dP = dpqr(1); dQ = dpqr(2); dR = dpqr(3);
 dPhi = P + (stheta / ctheta) * (Q * sphi + R * cphi);
 dTheta = Q * cphi - R * sphi;
 dPsi = (Q * sphi + R * cphi) / ctheta;
-% ---- �������ϵ���ٶ�----
+% ---- �������ϵ���ٶ�?----
 dVe = B' * uvw;
 dPN = dVe(1); dPE = dVe(2); dH = -dVe(3);
 
@@ -349,27 +351,18 @@ mach =VT/sonic;
 %UAV_CD
 %=============================================================================
 function CD = UAV_CD(alpha_deg)
-    IDX_alpha =[-4;-2;0;2;4;8;12;16;20];
-    TBL_CD =[0.026;0.024;0.024;   0.028;0.036;0.061;0.102;0.141;0.173];
-%         IDX_alpha =[-6.00;-4.00;-2.00;0.00;   2.00;4.00;6.00;  
-%                 8.00;10.00;12.00;14.00;16.00;18.00;20.00];
-%     TBL_Cx =[0.03931;0.03863;0.04155;   0.04847;0.05841;0.07079;0.08530;
-%              0.10213;0.11742;0.16796;0.23854;0.29419;0.37927;0.47888];
-    CD =interp1d(TBL_CD,IDX_alpha,alpha_deg);
+    IDX_alpha = [-4; -2; 0; 2; 4; 8; 12; 16; 20];
+    TBL_CD = [0.026; 0.024; 0.024; 0.028; 0.036; 0.061; 0.102; 0.141; 0.173];
+    CD = interp1d(TBL_CD, IDX_alpha, alpha_deg);
 %end function
 %=============================================================================
 %UAV_CL
 %=============================================================================
-function [CL0,CL_ele]=UAV_CL(alpha_deg)
-    IDX_alpha =[-4;-2;0;  2;4;8;12;16;20];
-    TBL_CL0 =[-0.219;-0.04;0.139;  0.299;0.455;0.766;1.083;1.409;1.743];
-%     IDX_alpha =[-6.00;-4.00;-2.00;0.00;   2.00;4.00;6.00;
-%                 8.00;10.00;12.00;14.00;16.00;18.00;20.00];
-%     TBL_Cy0 =[0.00983;0.21652;0.41990;   0.61268;0.78538;0.95201;1.11654;
-%               1.26195;1.39341;1.44498;1.44329;1.44519;1.28669;1.13923];
-    
-    CL0 =interp1d(TBL_CL0,IDX_alpha,alpha_deg);
-    CL_ele =0.00636;
+function [CL0, CL_ele] = UAV_CL(alpha_deg)
+    IDX_alpha = [-4; -2; 0; 2; 4; 8; 12; 16; 20];
+    TBL_CL0 = [-0.219; -0.04; 0.139; 0.299; 0.455; 0.766; 1.083; 1.409; 1.743];
+    CL0 = interp1d(TBL_CL0, IDX_alpha, alpha_deg);
+    CL_ele = 0.00636;
 %end UAV_CL
 
 %=============================================================================
@@ -382,14 +375,14 @@ function CY_beta=UAV_CY(alpha_deg)
 %=============================================================================
 %UAV_CM
 %=============================================================================
-function [CM0,CM_ele,CM_Q,CM_dalpha]=UAV_CM(alpha_deg)
-    IDX_alpha =[-4;-2;0;2;4;8;12;16;20];
-    TBL_CM0=[0.1161;0.0777;0.0393;0.0009;-0.0375;-0.0759;-0.1527;-0.2295;-0.3063];
-    CM0 =interp1d(TBL_CM0,IDX_alpha,alpha_deg);
-    CM_ele =-0.02052;
-%     CM_Q =-9.3136;
-CM_Q =-9.3136/3.0;
-    CM_dalpha =-4.0258;
+function [CM0, CM_ele, CM_Q, CM_dalpha] = UAV_CM(alpha_deg)
+    IDX_alpha = [-4; -2; 0; 2; 4; 8; 12; 16; 20];
+    TBL_CM0 = [0.1161; 0.0777; 0.0393; 0.0009; -0.0375; -0.0759; -0.1527; -0.2295; -0.3063];
+    CM0 = interp1d(TBL_CM0, IDX_alpha, alpha_deg);
+    CM_ele = -0.02052;
+    %     CM_Q =-9.3136;
+    CM_Q = -9.3136/3.0;
+    CM_dalpha = -4.0258;
 %end UAV_CM
 
 %=============================================================================
