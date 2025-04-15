@@ -80,9 +80,9 @@ if (psi_hmr > 180) psi_hmr = psi_hmr - 360.0; end
 if (psi_hmr <- 180) psi_hmr = psi_hmr + 360.0; end
 
 Vt = 25;
-alpha = (2.7480) / rad2deg;
+alpha = (2.3397) / rad2deg;
 beta = 0.0 / rad2deg;
-theta0 = (2.7480) / rad2deg;
+theta0 = (2.3397) / rad2deg;
 
 x0 = [
       Vt;       alpha;  beta;
@@ -178,7 +178,6 @@ Y = qs * (CY_beta * beta_deg);
 [CL0, CL_ele] = UAV_CL(alpha_deg);
 L = qs * (CL0 + CL_ele * ele);
 
-% ---- �������˶�����----
 Fxyz = [Pow; 0; 0] + S * [-D; Y; -L];
 duvw = Fxyz / mass - cross(pqr, uvw) + g * [-stheta; sphi * ctheta; cphi * ctheta];
 dU = duvw(1); dV = duvw(2); dW = duvw(3);
@@ -186,7 +185,6 @@ dVt = (U * dU + V * dV + W * dW) / Vt;
 dbeta = (dV * Vt - V * dVt) / (Vt * Vt * cbeta);
 dalpha = (U * dW - W * dU) / (U * U + W * W);
 
-% ---- ������������----
 [CR_beta, CR_ail, CR_rud, CR_P, CR_R] = UAV_CR(alpha_deg, beta_deg);
 Lbar = qs * b * (CR_beta * beta_deg + CR_ail * ail + CR_rud * rud + (CR_P * P + CR_R * R) * b / Vt / 2);
 
@@ -196,16 +194,13 @@ M = qs * cbar * (CM0 + CM_ele * ele + (CM_Q * Q) * cbar / Vt / 2); % + CM_dalpha
 [CN_beta, CN_ail, CN_rud, CN_P, CN_R] = UAV_CN(alpha_deg, beta_deg);
 N = qs * b * (CN_beta * beta_deg + CN_ail * ail + CN_rud * rud + (CN_P * P + CN_R * R) * b / Vt / 2);
 
-% ---- ������˶�����?----
 J = [Jx 0 -Jxz; 0 Jy 0; -Jxz 0 Jz];
 dpqr = inv(J) * (-cross(pqr, (J * pqr)) + [Lbar; M; N]);
 dP = dpqr(1); dQ = dpqr(2); dR = dpqr(3);
 
-% ---- ����ŷ����΢�ַ���----
 dPhi = P + (stheta / ctheta) * (Q * sphi + R * cphi);
 dTheta = Q * cphi - R * sphi;
 dPsi = (Q * sphi + R * cphi) / ctheta;
-% ---- �������ϵ���ٶ�?----
 dVe = B' * uvw;
 dPN = dVe(1); dPE = dVe(2); dH = -dVe(3);
 

@@ -1,6 +1,6 @@
-% function [xtrim, ytrim, utrim, dxtrim] = trimuavA(V, H, path)
-V = 25;
-H = 100;
+clear;
+V = 30;
+H = 500;
 path = 0;
 
 % [xtrim,utrim]=cktrim(V,H,path)

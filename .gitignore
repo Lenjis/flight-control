@@ -47,3 +47,6 @@ build.ninja
 rules.ninja
 .ninja_log
 .ninja_deps
+
+# 忽略 MATLAB 生成的文件
+slprj/

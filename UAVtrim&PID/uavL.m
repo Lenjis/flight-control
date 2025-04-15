@@ -73,19 +73,19 @@ sys = simsizes(sizes);
 %
 % initialize the initial conditions
 %
-rad2deg = 57.295779513082320876798154814105;
+rad2deg = 57.295779513082323;
 
 psi_hmr = 0.0;
 if (psi_hmr > 180) psi_hmr = psi_hmr - 360.0; end
 if (psi_hmr <- 180) psi_hmr = psi_hmr + 360.0; end
 
-Vt = 25; alpha = (2.7480) / rad2deg; beta = 0.0 / rad2deg; theta0 = (2.7480) / rad2deg;
+Vt = 30; alpha = (1.1190407073) / rad2deg; beta = 0.0 / rad2deg; theta0 = (1.1190407073) / rad2deg;
 
 x0 = [
-      Vt;       alpha;  beta;
-      -1500;    0;      60; 
-      0;        0;      0; 
-      0;        theta0; psi_hmr / rad2deg; 
+      Vt;   alpha;  beta;
+      0;    0;      500; 
+      0;    0;      0; 
+      0;    theta0; psi_hmr / rad2deg; 
       ];
 % str is always an empty matrix
 %
@@ -128,9 +128,9 @@ rud = u(3);      % rudder   deflection angle (deg)
 eng = u(4);      
 % ele=-1.875; ail=1; rud=-1; eng=35;
 % ------------------------------------------------% 
-SA = 1.3536;    % [�������]|[ƽ����]
-b = 3.2;        % [��չ]|[��]
-cbar = 0.423;   % [ƽ�������ҳ�]|[��]
+SA = 1.3536;
+b = 3.2;
+cbar = 0.423;
 Jx = 1.71;
 Jy = 5.54;
 Jz = 4.15;
@@ -143,30 +143,30 @@ g=9.81;
 alpha_deg = alpha*rad2deg;
 beta_deg = beta*rad2deg;
 
-% ---- ����ת���󣬴�����ϵ������ϵ----
+
 salpha = sin(alpha); sbeta = sin(beta);
 calpha = cos(alpha); cbeta = cos(beta);
 S = [calpha * cbeta -calpha * sbeta -salpha;
-   sbeta cbeta 0;
-   salpha * cbeta -salpha * sbeta calpha];
-% ---- ӭ�ǲ໬������������ٶ�----
+     sbeta cbeta 0;
+     salpha * cbeta -salpha * sbeta calpha];
+
 U = Vt * calpha * cbeta;
 V = Vt * sbeta;
 W = Vt * salpha * cbeta;
 uvw = [U; V; W];
-% ---- ����ת���󣬴ӵ���ϵ������ϵ----
+
 sphi = sin(phi); stheta = sin(theta); spsi = sin(psi);
 cphi = cos(phi); ctheta = cos(theta); cpsi = cos(psi);
 B = [ctheta * cpsi ctheta * spsi -stheta;
-   sphi * stheta * cpsi - cphi * spsi sphi * stheta * spsi + cphi * cpsi sphi * ctheta;
-   cphi * stheta * cpsi + sphi * spsi cphi * stheta * spsi - sphi * cpsi cphi * ctheta];
+     sphi * stheta * cpsi - cphi * spsi sphi * stheta * spsi + cphi * cpsi sphi * ctheta;
+     cphi * stheta * cpsi + sphi * spsi cphi * stheta * spsi - sphi * cpsi cphi * ctheta];
 
-% ---- ��������----
+
 Pow = eng / 100 * (mass * g / 4.0);
-% ---- ��������ܶȺͶ�ѹ----
+
 [ru, mach] = UAV_density(H, Vt); % [air density] [mach number]
 qs = SA * (ru * Vt * Vt / 2); % [Dynamic pressure](kg/m^2)
-% ---- ����������----
+
 CD = UAV_CD(alpha_deg);
 D = qs * CD;
 
@@ -176,15 +176,15 @@ Y = qs * (CY_beta * beta_deg);
 [CL0, CL_ele] = UAV_CL(alpha_deg);
 L = qs * (CL0 + CL_ele * ele);
 
-% ---- �������˶�����----
 Fxyz = [Pow; 0; 0] + S * [-D; Y; -L];
 duvw = Fxyz / mass - cross(pqr, uvw) + g * [-stheta; sphi * ctheta; cphi * ctheta];
 dU = duvw(1); dV = duvw(2); dW = duvw(3);
+
 dVt = (U * dU + V * dV + W * dW) / Vt;
 dbeta = (dV * Vt - V * dVt) / (Vt * Vt * cbeta);
 dalpha = (U * dW - W * dU) / (U * U + W * W);
 
-% ---- ������������----
+
 [CR_beta, CR_ail, CR_rud, CR_P, CR_R] = UAV_CR(alpha_deg, beta_deg);
 Lbar = qs * b * (CR_beta * beta_deg + CR_ail * ail + CR_rud * rud + (CR_P * P + CR_R * R) * b / Vt / 2);
 
@@ -194,16 +194,16 @@ M = qs * cbar * (CM0 + CM_ele * ele + (CM_Q * Q) * cbar / Vt / 2); % + CM_dalpha
 [CN_beta, CN_ail, CN_rud, CN_P, CN_R] = UAV_CN(alpha_deg, beta_deg);
 N = qs * b * (CN_beta * beta_deg + CN_ail * ail + CN_rud * rud + (CN_P * P + CN_R * R) * b / Vt / 2);
 
-% ---- ������˶�����----
 J = [Jx 0 -Jxz; 0 Jy 0; -Jxz 0 Jz];
+
 dpqr = inv(J) * (-cross(pqr, (J * pqr)) + [Lbar; M; N]);
+
 dP = dpqr(1); dQ = dpqr(2); dR = dpqr(3);
 
-% ---- ����ŷ����΢�ַ���----
 dPhi = P + (stheta / ctheta) * (Q * sphi + R * cphi);
 dTheta = Q * cphi - R * sphi;
 dPsi = (Q * sphi + R * cphi) / ctheta;
-% ---- �������ϵ���ٶ�----
+
 dVe = B' * uvw;
 dPN = dVe(1); dPE = dVe(2); dH = -dVe(3);
 
@@ -236,7 +236,7 @@ Vt      = x(1);   PN = x(4);    P = x(7);   phi   = x(10);
 alpha   = x(2);   PE = x(5);    Q = x(8);   theta = x(11);        
 beta    = x(3);   H = x(6);     R = x(9);   psi   = x(12);     
 
-rad2deg=57.295779513082320876798154814105;
+rad2deg=57.295779513082323;
 
 psi_hmr = psi * rad2deg;
 if (psi_hmr < 0.0) psi_hmr = psi_hmr + 360.0; end
