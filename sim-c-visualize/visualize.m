@@ -5,9 +5,6 @@ close all;
 % read the data
 cout = readtable(filePath, 'Delimiter', '\t', 'ReadVariableNames', true);
 
-info = stepinfo(cout.theta - 1.1190407073, cout.t);
-disp(info);
-
 figure;
 % plot c simulation output
 subplot(1, 2, 1);
