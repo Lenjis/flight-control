@@ -34,7 +34,7 @@
 
 # 忽略 Git 合并冲突文件
 *.orig
-
+git 
 # 忽略 CMake 生成的无用文件
 CMakeFiles/
 CMakeCache.txt
@@ -49,6 +49,6 @@ rules.ninja
 .ninja_deps
 
 # 忽略 MATLAB 生成的文件
-*/slprj/
+**/slprj/
 slprj/
 *.slxc
