@@ -1,6 +1,6 @@
 clear;
 V = 30;
-H = 500;
+H = 50;
 path = 0;
 
 % [xtrim,utrim]=cktrim(V,H,path)

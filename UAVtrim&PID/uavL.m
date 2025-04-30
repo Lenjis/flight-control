@@ -83,7 +83,7 @@ Vt = 30; alpha = (1.1190407073) / rad2deg; beta = 0.0 / rad2deg; theta0 = (1.119
 
 x0 = [
       Vt;   alpha;  beta;
-      0;    0;      500; 
+      -1100;    0;      50; 
       0;    0;      0; 
       0;    theta0; psi_hmr / rad2deg; 
       ];

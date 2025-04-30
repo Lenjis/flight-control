@@ -49,5 +49,6 @@ rules.ninja
 .ninja_deps
 
 # 忽略 MATLAB 生成的文件
+*/slprj/
 slprj/
 *.slxc
